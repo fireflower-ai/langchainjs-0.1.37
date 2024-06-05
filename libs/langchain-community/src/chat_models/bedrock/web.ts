@@ -1,3 +1,4 @@
+// libs/langchain-community/src/chat_models/bedrock/web.ts
 import { SignatureV4 } from "@smithy/signature-v4";
 import { HttpRequest } from "@smithy/protocol-http";
 import { EventStreamCodec } from "@smithy/eventstream-codec";
@@ -103,8 +104,8 @@ interface BedrockCallOptions extends Partial<BaseChatModelParams> {
  * region, and the maximum number of tokens to generate.
  *
  * The `BedrockChat` class supports both synchronous and asynchronous interactions with the model,
- * allowing for streaming responses and handling new token callbacks. It can be configured with 
- * optional parameters like temperature, stop sequences, and guardrail settings for enhanced control 
+ * allowing for streaming responses and handling new token callbacks. It can be configured with
+ * optional parameters like temperature, stop sequences, and guardrail settings for enhanced control
  * over the generated responses.
  *
  * @example
@@ -223,7 +224,10 @@ export class BedrockChat extends BaseChatModel implements BaseBedrockInput {
 
   guardrailVersion = "";
 
-  guardrailConfig?: { tagSuffix: string; streamProcessingMode: "SYNCHRONOUS" | "ASYNCHRONOUS" };
+  guardrailConfig?: {
+    tagSuffix: string;
+    streamProcessingMode: "SYNCHRONOUS" | "ASYNCHRONOUS";
+  };
 
   get lc_aliases(): Record<string, string> {
     return {
@@ -301,7 +305,8 @@ export class BedrockChat extends BaseChatModel implements BaseBedrockInput {
     this.usesMessagesApi = canUseMessagesApi(this.model);
     this.trace = fields?.trace ?? this.trace;
     this.guardrailVersion = fields?.guardrailVersion ?? this.guardrailVersion;
-    this.guardrailIdentifier = fields?.guardrailIdentifier ?? this.guardrailIdentifier;
+    this.guardrailIdentifier =
+      fields?.guardrailIdentifier ?? this.guardrailIdentifier;
     this.guardrailConfig = fields?.guardrailConfig;
   }
 
@@ -409,11 +414,13 @@ export class BedrockChat extends BaseChatModel implements BaseBedrockInput {
         host: url.host,
         accept: "application/json",
         "content-type": "application/json",
-        ...(this.trace && this.guardrailIdentifier && this.guardrailVersion && {
-          "X-Amzn-Bedrock-Trace": this.trace,
-          "X-Amzn-Bedrock-GuardrailIdentifier": this.guardrailIdentifier,
-          "X-Amzn-Bedrock-GuardrailVersion": this.guardrailVersion,
-        })
+        ...(this.trace &&
+          this.guardrailIdentifier &&
+          this.guardrailVersion && {
+            "X-Amzn-Bedrock-Trace": this.trace,
+            "X-Amzn-Bedrock-GuardrailIdentifier": this.guardrailIdentifier,
+            "X-Amzn-Bedrock-GuardrailVersion": this.guardrailVersion,
+          }),
       },
     });
 
